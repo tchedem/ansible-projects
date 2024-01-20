@@ -7,10 +7,10 @@
 
     node_apps_localtion: /usr/local/opt/node_apps
 
-    node_project_path_on_control_node: /home/tchedem/projects/ansible-simple_node_js_app/simple_express_app
+    node_project_path_on_control_node: ~/projects/ansible-projects/1-simple_node_js_app/simple_express_app
     project_name: simple_express_app
     foreaver_executable_path: /usr/local/bin/forever
-    # node_project_path_on_control_node: /home/tchedem/projects/ansible-simple_node_js_app/node_app/app.js
+    # node_project_path_on_control_node: ~/projects/ansible-simple_node_js_app/node_app/app.js
 
   tasks:
     # -
