@@ -1,0 +1,77 @@
+---
+
+- hosts : all
+  become: yes
+
+  vars: 
+
+    node_apps_localtion: /usr/local/opt/node_apps
+
+    node_project_path_on_control_node: /home/tchedem/projects/ansible-simple_node_js_app/simple_express_app
+    project_name: simple_express_app
+    foreaver_executable_path: /usr/local/bin/forever
+    # node_project_path_on_control_node: /home/tchedem/projects/ansible-simple_node_js_app/node_app/app.js
+
+  tasks:
+    # -
+
+    - name: Update base paquages
+      yum: update_cache=true
+      
+    - name: Install EPEL repo (and auto imports its GPG key)
+      dnf: name=epel-release state=present
+
+    - name: Import Remi GPG key (P_59)
+      rpm_key:
+        key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+        state: present
+
+    - name: Install Remi repo
+      dnf:
+        name: "https://rpms.remirepo.net/enterprise/remi-release-8.rpm"
+        state: present
+
+    # Can do this only in test environement
+    - name: Ensure firewalld is stopped (since this is for testing).
+      service: name=firewalld state=stopped
+
+    - name: Install nodeJS and npm
+      dnf: name=npm state=present enablerepo=epel
+
+    - name: Install Forever (to run our nodeJS app)
+      npm: 
+        name: forever
+        global: yes
+        state: present
+
+    - name: Ensure Node.js app folder exists
+      file: 
+        path: "{{ node_apps_localtion }}"
+        state: directory
+
+    - name: Copy node project to the target machine
+      copy: 
+        src : "{{ node_project_path_on_control_node }}"
+        dest: "{{ node_apps_localtion }}"
+
+    - name:  Install simple_express_app dependencies
+      npm: 
+        path: "{{ node_apps_localtion }}/{{ project_name }}"
+
+      # In this task, we use foreaver absolute path because the foreaver command is not available for the root user
+    - name: Check list of running nodeJS apps
+      # command: "{{ foreaver_executable_path }}"
+      command: "{{ foreaver_executable_path }} list"
+      register: forever_lists # we create a new variables after this task execution
+
+    - name: Start the node app
+      command: "{{ foreaver_executable_path }} start {{ node_apps_localtion }}/{{ project_name }}/app.js"
+
+    # - name: Debug forever list command result
+    #   debug: 
+    #     msg: |
+    #       "{{ forever_lists }}"
+    #       "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+    #     # msg: "LSSSSS"
+
+      

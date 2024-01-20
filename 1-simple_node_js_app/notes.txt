@@ -1,0 +1,39 @@
+Déploiement d'une Application Node.js sur Rocky Linux 8
+Ce projet vise à simplifier le processus de déploiement d'une application Node.js sur la distribution Rocky Linux 8 en utilisant des outils et des pratiques DevOps.
+
+Prérequis
+Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine de déploiement :
+
+Node.js et npm : Installez la version de Node.js requise pour votre application.
+Docker : Utilisé pour l'isolation de l'application.
+Git : Pour cloner le projet depuis le référentiel.
+Instructions
+Clonage du projet :
+
+bash
+Copy code
+git clone https://github.com/votre-utilisateur/mon-projet.git
+cd mon-projet
+Installation des dépendances Node.js :
+
+bash
+Copy code
+npm install
+Construction de l'image Docker :
+
+bash
+Copy code
+docker build -t mon-projet:latest .
+Exécution de l'application via Docker :
+
+bash
+Copy code
+docker run -p 8080:8080 -d mon-projet:latest
+L'application Node.js est maintenant accessible à l'adresse http://localhost:8080.
+
+Configuration
+Personnalisez la configuration de l'application dans le fichier config.js.
+Assurez-vous que les ports nécessaires sont ouverts dans votre environnement.
+Contribuer
+Si vous souhaitez contribuer à ce projet, veuillez ouvrir une issue ou créer une demande de tirage (pull request) sur le référentiel GitHub.
+

@@ -1,0 +1,57 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  
+  config.vm.box = "geerlingguy/rockylinux8"
+
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  config.vm.provider "virtualbox" do |vb|
+    
+    vb.gui = false
+    vb.memory = 512
+    # vb.linked_clone = true
+  
+  end
+
+  config.ssh.username = 'vagrant'
+  config.ssh.password = 'vagrant'
+
+  # Specify the path to your local public key
+  local_public_key_path = File.expand_path("~/.ssh/personal_ansible_key.pub")
+
+  # Read the content of the local public key
+  local_public_key_content = File.read(local_public_key_path)
+  
+
+  config.vm.network :private_network, ip: "192.168.56.100"
+
+  # Disable the timeout
+  config.vm.boot_timeout = 0
+
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+  config.vm.provision "shell", inline: <<-SHELL
+
+    # Update the system
+    # yum update -y
+
+    # Add your public key to the authorized_keys file
+    mkdir -p /home/vagrant/.ssh
+
+    echo '#{local_public_key_content}' > /home/vagrant/.ssh/authorized_keys
+
+    chmod 700 /home/vagrant/.ssh
+
+    chmod 600 /home/vagrant/.ssh/authorized_keys
+    
+    chown -R vagrant:vagrant /home/vagrant/.ssh
+
+  SHELL
+
+end
