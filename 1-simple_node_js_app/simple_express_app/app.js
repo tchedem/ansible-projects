@@ -4,7 +4,7 @@ var app = express();
 
 // Respond to requests for / with 'Hello World'.
 app.get('/', function(req, res){
-    res.send('Hello World!');
+    res.send('Hello World!, Here is your simple Express APP response.');
 });
 
 // Listen on port 80 (like a true web server).

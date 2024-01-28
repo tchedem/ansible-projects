@@ -1,6 +1,7 @@
 ---
 
 - hosts : all
+  # I'm in test environment. It is not a good practice to run command with root privileges
   become: yes
 
   vars: 
