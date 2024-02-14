@@ -1,0 +1,8 @@
+---
+
+  drupal_apache_virtual_host_local_path: "./templates/drupal.test.conf.j2"
+  domain : "manual_drupal.test"
+  drupal_core_path : "/var/www/drupal"
+  databaseUser: "manual_dupal_user"
+  databaseName: "manual_dupal_db_name"
+  drupalSiteName: "manual_dp"

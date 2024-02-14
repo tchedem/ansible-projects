@@ -4,3 +4,5 @@ node_modules/
 .vagrant/
 
 notes.txt
+*notes.txt
+ssh_notes.md

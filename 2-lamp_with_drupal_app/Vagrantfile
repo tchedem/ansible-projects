@@ -1,0 +1,31 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "geerlingguy/ubuntu2004"
+  config.vm.network :private_network, ip: "192.168.56.9"
+  config.vm.hostname = "hostname"
+  config.ssh.insert_key = true
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.name = "drupalfixversiondeployer_local"
+    vb.memory = "1024"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    # apt-get update
+    # apt-get install -y apache2
+    # echo "deb http://deb.debian.org/debian/ bullseye main
+    # deb-src http://deb.debian.org/debian/ bullseye main
+    # #deb http://deb.debian.org/debian/ bullseye-updates main
+    # #deb-src http://deb.debian.org/debian/ bullseye-updates main
+    # #deb http://security.debian.org/debian-security bullseye-security main
+    # #deb-src http://security.debian.org/debian-security bullseye-security main
+    # " | sudo tee /etc/apt/sources.list >/dev/null
+
+    # apt update -yq
+    # sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq 
+  SHELL
+
+end
