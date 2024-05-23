@@ -5,4 +5,14 @@ node_modules/
 
 notes.txt
 *notes.txt
+<<<<<<< HEAD
 ssh_notes.md
+=======
+ssh_notes.md
+60-install_meilisearch
+meilisearch.zip
+playbook_with_comments.yml
+3-lamp_auto_deploy_drupal_app
+
+hides
+>>>>>>> d02e358 (fix drupal installation pbb and update meilisearch deploiement script)

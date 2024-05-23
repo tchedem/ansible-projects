@@ -1,0 +1,9 @@
+--- 
+
+  download_dir: /tmp
+  solr_dir: /opt/solr
+  # solr_version: 8.6.0 
+  solr_version: 8.9.0
+  
+  # solr_checksum: sha512:0....
+  solr_checksum: e34b2421db8586691ff41b86beca77bcb61243ce8edfade74eda8da4b0fabde0078884db301350a0d0dfc4a6fee46320ddf059469300444da4e3693220df5e40 *solr-9.5.0.tgz

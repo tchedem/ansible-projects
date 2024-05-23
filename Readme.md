@@ -1,8 +1,8 @@
 # Purpose of this repository 
 
-This repository is for my own learning purpose
+The goal of this repo is to discover Ansible and learn practical concept of it! 
 
-If you want, you can use it the way you want. 
+If you like my projects, you can use it the way you want. 
 
 My goal is to work on @geerlingguy projects and at each step learn keys concepts of Ansible for DevOPS.
 

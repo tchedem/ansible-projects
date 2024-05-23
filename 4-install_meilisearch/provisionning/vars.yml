@@ -1,0 +1,21 @@
+---
+
+  meilisearch_host: localhost
+  meilisearch_port: 7700
+
+  meilisearch_user: "meilisearch"
+
+  meilisearch_installation_script_path: "/home/vagrant/install_meilisearch.sh"
+  meilisearch_downloaded_path : "/home/vagrant/meilisearch"
+
+  meilisearch_executable_path: "/usr/bin"
+
+  meilisearch_executable_complete_working_path: "/usr/bin/meilisearch"
+  meilisearch_user_working_dir: "/var/lib/meilisearch"
+
+  # 
+  meilisearch_current_environement: "development"
+  meilisearch_master_key: e6f2bd1e-21c4-4028-9933-24de191cb704
+  # meilisearch_master_key: "{{ 'prefix_' + uuid }}"
+  
+  system_default_user: "vagrant"

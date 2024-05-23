@@ -181,11 +181,27 @@
           name: "{{ databaseName }}"
           target: /home/vagrant/backup.sql
 
+<<<<<<< HEAD
       - name: Download MySQL backup from MySQL server to managed node
         fetch:
           src: /home/vagrant/backup.sql
           dest: /home/tchedem/
           flat: yes
+=======
+      - name: Compressed the backup
+        archive:
+          path: /home/vagrant/backup.sql  # Path to the directory you want to zip
+          dest: /home/vagrant/backup.zip  # Path to the zip file you want to create
+          format: zip
+
+      - name: Download MySQL backup from MySQL server to managed node
+        fetch:
+          # src: /home/vagrant/backup.sql
+          src: /home/vagrant/backup.zip
+          dest: /home/tchedem/
+          flat: yes
+        timeout: 600 # 10min
+>>>>>>> d02e358 (fix drupal installation pbb and update meilisearch deploiement script)
 
       - name: Add drush to the Drupal site with Composer.
         composer:

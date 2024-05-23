@@ -1,0 +1,81 @@
+---
+  # ssh-keygen -f "/home/tchedem/.ssh/known_hosts" -R "192.168.56.11"
+  - hosts: all
+    become: yes
+    
+    vars:
+      ansible_ssh_timeout: 60  # Définition du délai d'attente à 60 secondes pour toutes les connexions SSH
+
+    vars_files: 
+      - vars.yml
+
+    pre_tasks: 
+      - name: Update apt cache if needed
+        apt: update_cache=true cache_valid_time=3600
+
+
+    tasks: 
+
+      - name: Install Java
+        apt: 
+          state: present
+          name : 
+            - default-jre 
+            - default-jdk
+            # - openjdk-11-jdk
+            # - openjdk-8-jdk
+
+
+      # - name : Debug var 
+      #   debug: "https://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz"
+
+      # - name: Fail the playbook if MeiliSearch is already downloaded
+      #   fail:
+      #     msg: "stop execution"
+
+
+      # - name: Download Solr
+      #   get_url: 
+      #     # url: "https://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz"
+      #     # dest: "{{ download_dir }}/solr-{{ solr_version }}.tgz"
+      #     # checksum: "{{ solr_checksum }}"
+      #     # url: https://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz
+      #     # dest: "{{ download_dir }}"
+      #     url: https://archive.apache.org/dist/lucene/solr/8.9.0/solr-8.9.0.tgz
+      #     dest: "/vagrant/user"
+      #     # checksum: "sha512:114b2e1c4bab2bdc71fb9050c4fc038b93c9e92bb304c7e9e4d1502ceec449b84d3d8c53833480e0ab50f463279c05773282f63f12b4503bb453a017ccfa3f60"
+      #   timeout: 3600   # Set timeout to 60 seconds
+
+      - name: Retest Solr Download 
+        command: wget https://archive.apache.org/dist/lucene/solr/8.9.0/solr-8.9.0.tgz
+        args:
+          chdir: /tmp
+
+      # - name: Expand Solr 
+      #   unarchive: 
+      #     src: "{{ download_dir }}/solr-{{ solr_version }}.tgz"
+      #     dest: "{{ download_dir }}"
+      #     remote_src: true 
+      #     creates: "{{ download_dir }}/solr-{{ solr_version }}/README.txt"
+
+      # # In some case, we can combine the tww precedent task in one by using src in the unarchive module (p81)
+
+  
+      # - name: Run Solr installation script 
+      #   command: > 
+      #     {{ download_dir }}/solr-{{ solr_version }}/bin/install_solr_service.sh
+
+
+      # - name: Run Solr installation script.
+      #   command: >
+      #     {{ download_dir }}/solr-{{ solr_version }}/bin/install_solr_service.sh
+      #     {{ download_dir }}/solr-{{ solr_version }}.tgz
+      #     -i /opt
+      #     -d /var/solr
+      #     -u solr
+      #     -s solr
+      #     -p 8983
+      #     creates={{ solr_dir }}/bin/solr
+
+      # - name: Ensure solr is started and enabled on boot.
+      #   service: name=solr state=started enabled=yes

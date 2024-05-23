@@ -1,0 +1,13 @@
+[Unit]
+Description=Meilisearch service worker
+After=systemd-user-sessions.service
+
+[Service]
+Type=simple
+WorkingDirectory={{ meilisearch_user_working_dir }}
+ExecStart={{ meilisearch_executable_complete_working_path }} --config-file-path /etc/meilisearch.toml
+User={{ meilisearch_user }}
+Group={{ meilisearch_user }}
+
+[Install]
+WantedBy=multi-user.target

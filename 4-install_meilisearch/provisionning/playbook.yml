@@ -1,0 +1,145 @@
+---
+
+  - hosts: all
+
+    vars_files:
+      - vars.yml
+
+    pre_tasks:
+
+      - name: Update apt cache if needed 
+        become: yes
+        apt: update_cache=yes cache_valid_time=3600 
+
+    handlers: 
+      - name: restart nginx
+        service:
+          name: nginx 
+          state: restarted 
+
+    tasks: 
+
+      - name: Install required software for ansible apt deploymentrepository management
+        become: yes
+        apt:
+          state: present 
+          name:
+            - python3-apt
+            - python3-pycurl
+
+      - name: Install net-tool | cUrl
+        become: yes
+        apt: 
+          state: present 
+          name:
+            - net-tools
+            - curl
+
+      - name: Install NGINX 
+        become: yes
+        apt: 
+          state: present
+          name: nginx 
+
+      - name: Check if meilisearch installation script is already downloaded
+        stat: 
+          path: "{{ meilisearch_installation_script_path }}"
+        register: check_if_meilisearch_installation_script_is_already_downloaded
+        
+
+      - name: Download meilisearch installation script
+        get_url:
+          url: https://install.meilisearch.com
+          dest: "{{ meilisearch_installation_script_path }}"
+          owner: "{{ system_default_user }}"
+          mode: '0766'
+          # creates: "{{ meilisearch_installation_script_path }}"
+        when: not check_if_meilisearch_installation_script_is_already_downloaded.stat.exists
+        
+
+      - name: Check if meilisearch already Downloaded...
+        # host: localhost
+        stat: 
+          # state: present 
+          path: /home/vagrant/meilisearch
+        register: check_if_meilisearch_already_downloaded
+
+      - name: Install MeiliSearch
+        shell: "bash /home/vagrant/install_meilisearch.sh"
+        when: not check_if_meilisearch_already_downloaded.stat.exists
+
+      - name: Copy meilisearch to executable apps folder 
+        become: yes
+        copy:
+          remote_src: true
+          src: "/home/vagrant/meilisearch"
+          dest: "/usr/bin"
+          owner: "vagrant"
+
+      - name: Set execution permission on meilisearch package
+        become: yes
+        file:
+          path: /usr/bin/meilisearch
+          state: file
+          owner: meilisearch
+          group: meilisearch
+          mode: u+rwx,g-wx,o-rwx
+          modification_time: preserve
+          access_time: preserve
+
+      - name: Create meilisearch user
+        become: yes
+        user:
+          name: meilisearch
+          home: /var/lib/meilisearch
+          shell: /bin/false
+          createhome: yes
+          system: yes
+
+      - name: Check if MeiliSearch configuration file is already downloaded
+        stat: 
+          path: "{{ meilisearch_installation_script_path }}"
+        register: check_if_meilisearch_configuration_file_is_already_downloaded
+        
+      
+      - name: Download MeiliSearch configuration file
+        become: yes
+        get_url:
+          url: https://raw.githubusercontent.com/meilisearch/meilisearch/latest/config.toml
+          dest: /etc/meilisearch.toml
+          mode: '0644'
+        when: not check_if_meilisearch_configuration_file_is_already_downloaded.stat.exists
+
+      - name: Copy meilisearch config file
+        become: yes  
+        template: 
+          # src: ./files/meilisearch.toml
+          src: "./templates/meilisearch.toml.j2"
+          dest: "/etc/meilisearch.toml"
+          owner: root 
+          group: root 
+          mode: "0644"
+
+      - name: Copy meilisearch service file
+        become: yes  
+        template: 
+          # src: ./files/meilisearch.toml
+          src: "./templates/meilisearch.service.j2"
+          dest: "/etc/systemd/system/meilisearch.service"
+          owner: root 
+          group: root 
+          mode: "0644"
+
+      - name: Enable and start Meilisearch service
+        become: yes
+        service:
+          name: meilisearch
+          state: started 
+          enabled: yes
+
+      - name: Restart Meilisearch service
+        become: yes
+        service:
+          name: meilisearch
+          state: restarted
+
