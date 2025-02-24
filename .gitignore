@@ -1,0 +1,42 @@
+node_modules/
+
+.vscode/
+.vagrant/
+
+<<<<<<< HEAD
+notes.txt
+*notes.txt
+ssh_notes.md
+60-install_meilisearch
+meilisearch.zip
+playbook_with_comments.yml
+3-lamp_auto_deploy_drupal_app
+
+hides
+=======
+hides
+
+# folders
+ansible-venv
+0-provision_vagrant_vm_with_ansible
+1-simple_node_js_app
+2-lamp_with_drupal_app
+3-lamp_auto_deploy_drupal_app
+4-install_meilisearch
+5-apache_solr
+60-install_meilisearch
+mod-security
+ressources
+vault
+
+# Files
+notes.txt
+*notes.txt
+ssh_notes.md
+meilisearch.zip
+playbook_with_comments.yml
+
+errors.md
+non-understand.md 
+Readme.md 
+>>>>>>> develop
