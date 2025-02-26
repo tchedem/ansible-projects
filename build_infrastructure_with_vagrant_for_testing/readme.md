@@ -98,10 +98,152 @@ ansible [host-group-name] -m module ...
 ```
 
 ###### Manage users and groups
+[Link to the user module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html)
 ```bash
-# add an admin group on the `app` servers for the server administrator
+# add an admin group on the `app` servers for the server administrators
 ansible app -b -m group -a "name=admin state=present"
+# The group module is pretty simple; you can remove a group by setting state=absent, set a group id with gid=[gid], and indicate that the group is a system group with system=yes
+
+# Add the user johndoe in the new group we created and give him a default home folder
+ansible app -b -m user -a "name=johndoe group=admin createhome=yes"
+# We have access a to set of options that we can use to 
+# create a password for the user : password=[encrypted-password]
+# generate SSH key for the user : generate_ssh_key=yes
+# define a default SHELL for the user : shell=[shell]
+# define the UID of the user : uuid=[uuid]
+
+# Delete a user account
+ansible app -b -m user -a "name=johndoe state=absent remove=yes"
+
 ```
+
+###### Manage packages
+They are various modules to manage package under different kind of linux System. But they are a generic that can be used to install things like `git` on Ubuntu, CentOs, OpenSuse, RHEL, Fedora. The generic manage is called `package` it work the same way as `dnf`, `apt`, `yum`
+
+```bash
+# Install git
+ansible app -b -m package -a "name=git state=present"
+```
+
+###### Manage files and directories
+
+```bash
+# To get informations about a file, you can use the module stat
+ansible multi -m stat -a "path=/etc/environment"
+
+# Copy file to the servers
+ansible multi -m copy -a "src=/etc/hosts dest=/tmp/host"
+# Copy an entire directory
+ansible multi -m copy -a "src=/absolute-path-to-the-dir dest=/detination-absolute-path"
+# Copy only content in a directory without the folder
+ansible multi -m copy -a "src=/absolute-path-to-the-dir/ dest=/detination-absolute-path"
+
+# Retrive file from the servers
+# Use this command to grab the hosts file from the servers
+ansible multi -b -m fetch -a "src=/etc/hosts dest=/tmp"
+# The fetched files will be stored like this: /tmp/192.168.56.5/etc/hosts
+# So, you will see each server file in that format with the given IP addresses
+
+# If you want to retrive file without the full path to the file, you can do it with the attribute flat=yes
+ansible multi -m fetch -a "src=/etc/hosts dest=/tmp flat=yes"
+# But it is only usefull if you are fetching file from one server!
+# Otherwise, the fetched file will be removed by the last fetch file from your servers
+
+# Create directories and files
+ansible multi -m file -a "dest=/tmp/test mode=644 state=directory"
+
+# Create a symlink 
+ansible multi -m file -a "src=/tmp/test dest==/tmp/symlink state=link"
+
+# Delete directories and files 
+ansible multi -m file -a "src=/path/to-file-or-direcotry state=absent"
+
+# Another useful modules are 
+lineinfile, ini_file, and unarchive
+
+```
+
+###### Run operations in the background
+
+View p38
+```bash
+# Operations like update packages and system might take a few time. It is alway great to have something that can run commands asynchroniously (asynchronously,)  and pool the servers when things finish
+
+# use -B  <max_number of time (in second) to let the job run>
+# use -P (--pool) <time interval between each pooling from servers (in second)>
+```
+
+
+###### Update servers asynchronously with asynchronous jobs
+
+```bash
+ansible multi -b -B 3600 -P 0 -a "dnf -y update"
+# With the option -P 0
+
+# As output, will get something like this
+{
+  "192.168.56.4": {
+    "CHANGED": true,
+    "ansible_facts": {
+      "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "ansible_job_id": "333866395772.18507",
+    "changed": true,
+    "finished": 0,
+    "results_file": "/root/.ansible_async/333866395772.18507",
+    "started": 1
+  },
+  "... [other hosts] ..."
+}
+
+# To check the status of each servers we can use the `async_status` module
+ansible multi -b -m async_status -a "jid=j102895426651.9771"
+
+# For tasks you don’t track remotely, it’s usually a good idea to log the progress of the task somewhere, and also send some sort of alert on failure—especially, for example, when running backgrounded tasks that perform backup operations, or hen running business-critical database maintenance tasks.
+
+# we can also run task in playbook asynchronously by defining an `async` and `poll` parameters on the play.
+
+```
+
+
+###### Check log files
+
+```bash
+
+# 3 golden rules
+# 1- a command like `tail -f` wont work via ansible. SImply bevause, you can't send Ctrl+C to the program to stop it
+# 2- don't cat a huge file via Stdout from multiple server, you can strugle dealing with them
+# 3- use the shell module, if youi want to perform some filtering operations like `cat file | grep pattern`
+
+# view last line of our message log file from each server
+ansible multi -b -a "tail /var/log/messages"
+
+# if you want to perform some filter operation on this file, you should use teh `shell` module
+ansible multi -b -m shell -a "tail /var/log/messages | grep ansible-command | wc -l"
+ansible multi -b -a "tail /var/log/messages | grep ansible-command | wc -l" # Use the command module and wont work
+
+```
+
+###### Manage cron jobs
+
+Ansible make managing cron job easy with it `cron` module.
+
+```bash
+ansible multi -b -m cron -a "name='daily-cron-all-servers' hour=4 job='/path/to/daily-script.sh'"
+# Ansible will assume * for all values you don’t specify (valid values are day, hour, minute, month, and weekday).
+# You could also specify special time values like reboot,
+yearly, or monthly using special_time=[value]
+```
+
+
+
+
+
+
+
+
+
+
 
 ---
 
