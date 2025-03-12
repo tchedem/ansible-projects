@@ -3,17 +3,6 @@ node_modules/
 .vscode/
 .vagrant/
 
-<<<<<<< HEAD
-notes.txt
-*notes.txt
-ssh_notes.md
-60-install_meilisearch
-meilisearch.zip
-playbook_with_comments.yml
-3-lamp_auto_deploy_drupal_app
-
-hides
-=======
 hides
 
 # folders
@@ -28,6 +17,9 @@ ansible-venv
 mod-security
 ressources
 vault
+ansible-playbooks
+elk
+opensearch
 
 # Files
 notes.txt
@@ -39,4 +31,4 @@ playbook_with_comments.yml
 errors.md
 non-understand.md 
 Readme.md 
->>>>>>> develop
+new_words.txt
